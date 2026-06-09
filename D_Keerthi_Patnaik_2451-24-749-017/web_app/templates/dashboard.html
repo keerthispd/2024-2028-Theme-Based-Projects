@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CryptoSafe Dashboard</title>
+  <style>
+    :root {
+      --bg: #06101b;
+      --panel: rgba(9, 18, 30, 0.86);
+      --panel-border: rgba(110, 231, 183, 0.12);
+      --ink: #eff6ff;
+      --muted: #9fb0c2;
+      --accent: #6ee7b7;
+      --accent-2: #38bdf8;
+      --danger: #f43f5e;
+      --chip: rgba(56, 189, 248, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 15% 15%, rgba(56, 189, 248, 0.14), transparent 28%),
+        radial-gradient(circle at 85% 10%, rgba(110, 231, 183, 0.14), transparent 22%),
+        linear-gradient(160deg, #020814, #081627 50%, #050d18);
+      padding: 24px;
+    }
+
+    .topbar {
+      width: min(1240px, 100%);
+      margin: 0 auto 18px;
+      padding: 14px 18px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(166, 180, 194, 0.12);
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-right: auto;
+    }
+
+    .brand strong {
+      font-size: 1.05rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .brand span {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .logout {
+      color: #03111a;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      text-decoration: none;
+      font-weight: 700;
+      padding: 10px 14px;
+      border-radius: 12px;
+    }
+
+    .logout:hover,
+    .logout:focus-visible,
+    .delete-fab:hover,
+    .delete-fab:focus-visible,
+    .add-fab:hover,
+    .add-fab:focus-visible,
+    .tile:focus-visible,
+    button:focus-visible {
+      outline: 2px solid rgba(110, 231, 183, 0.72);
+      outline-offset: 2px;
+    }
+
+    .account {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+      margin-right: 6px;
+    }
+
+    .account-user {
+      color: var(--muted);
+      font-size: 0.82rem;
+      white-space: nowrap;
+    }
+
+    .delete-btn {
+      background: transparent;
+      color: var(--danger);
+      border: 1px solid rgba(244,63,94,0.12);
+      padding: 6px 8px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .wrap {
+      width: min(1240px, 100%);
+      margin: 0 auto;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 16px;
+    }
+
+    .tile {
+      position: relative;
+      min-height: 150px;
+      border: 1px solid rgba(110, 231, 183, 0.18);
+      border-radius: 20px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.035));
+      box-shadow: 0 22px 60px rgba(2, 8, 20, 0.5);
+      backdrop-filter: blur(14px);
+      padding: 16px;
+      color: var(--ink);
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease, box-shadow 0.18s ease;
+    }
+
+    .tile-badge {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      min-width: 34px;
+      height: 24px;
+      padding: 0 7px;
+      border-radius: 8px;
+      background: linear-gradient(145deg, rgba(110, 231, 183, 0.24), rgba(56, 189, 248, 0.2));
+      border: 1px solid rgba(110, 231, 183, 0.24);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.03), 0 10px 24px rgba(0, 0, 0, 0.18), 0 0 18px rgba(56, 189, 248, 0.14);
+      color: #edfdf7;
+      font-size: 0.62rem;
+      font-weight: 800;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      text-shadow: 0 1px 0 rgba(2, 8, 20, 0.35);
+    }
+
+    .tile-badge::before {
+      content: "Open";
+      line-height: 1;
+    }
+
+    .tile:hover {
+      transform: translateY(-4px);
+      border-color: rgba(110, 231, 183, 0.48);
+      background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.05));
+      box-shadow: 0 28px 72px rgba(2, 8, 20, 0.62);
+    }
+
+    .icon {
+      width: 68px;
+      height: 68px;
+      border-radius: 14px;
+      background: linear-gradient(145deg, rgba(110, 231, 183, 0.26), rgba(56, 189, 248, 0.22));
+      border: 1px solid rgba(239,246,255,0.08);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .icon::before {
+      content: "";
+      position: absolute;
+      right: 0;
+      top: 0;
+      border-left: 14px solid transparent;
+      border-top: 14px solid rgba(255, 255, 255, 0.14);
+      width: 0;
+      height: 0;
+    }
+
+    .icon::after {
+      content: "";
+      position: absolute;
+      inset: 14px 12px 12px;
+      border-radius: 10px;
+      border: 2px solid rgba(239, 246, 255, 0.75);
+      border-top-width: 6px;
+    }
+
+    .name {
+      font-weight: 800;
+      line-height: 1.18;
+      word-break: break-word;
+      font-size: 1.02rem;
+      margin-top: 58px;
+      color: var(--ink);
+    }
+
+    .meta {
+      color: rgba(239,246,255,0.86);
+      font-size: 0.9rem;
+      margin-top: 8px;
+    }
+
+    .status {
+      margin-bottom: 16px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-size: 0.92rem;
+      display: none;
+    }
+
+    .status.show { display: block; }
+    .status.error { background: rgba(244, 63, 94, 0.16); color: #fecdd3; }
+
+    .hidden { display: none !important; }
+
+    .empty {
+      color: var(--muted);
+      border: 1px dashed rgba(166, 180, 194, 0.2);
+      border-radius: 18px;
+      padding: 24px;
+      background: rgba(255, 255, 255, 0.03);
+      text-align: center;
+    }
+
+    .add-fab {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      width: 58px;
+      height: 58px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      text-decoration: none;
+      color: #02131f;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.34);
+      font-size: 2rem;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .delete-fab {
+      position: fixed;
+      left: 24px;
+      bottom: 24px;
+      background: linear-gradient(135deg, #ff7a7a, var(--danger));
+      color: #fff;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-weight: 700;
+      box-shadow: 0 12px 30px rgba(244,63,94,0.24);
+      cursor: pointer;
+      z-index: 1000;
+    }
+
+    @media (max-width: 768px) {
+      body { padding: 18px; }
+      .topbar {
+        padding: 12px 14px;
+        gap: 10px;
+      }
+      .brand span { font-size: 0.84rem; }
+      .grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+      .tile { min-height: 130px; padding: 12px; }
+      .icon { width: 52px; height: 52px; }
+      .name { margin-top: 48px; font-size: 0.9rem; }
+      .tile-badge {
+        right: 8px;
+        top: 8px;
+        min-width: 32px;
+        height: 20px;
+        padding: 0 6px;
+        font-size: 0.5rem;
+      }
+      .add-fab { right: 16px; bottom: 16px; }
+      .delete-fab { left: 16px; bottom: 16px; }
+    }
+
+    @media (min-width: 769px) and (max-width: 1024px) and (orientation: landscape) {
+      body { padding: 20px; }
+      .topbar { padding: 12px 16px; }
+      .brand span { font-size: 0.82rem; }
+      .grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; }
+      .tile { min-height: 134px; padding: 12px; }
+      .icon { width: 52px; height: 52px; }
+      .name { margin-top: 48px; }
+      .tile-badge {
+        right: 8px;
+        top: 8px;
+        min-width: 30px;
+        height: 18px;
+        padding: 0 6px;
+        font-size: 0.5rem;
+      }
+      .add-fab { right: 18px; bottom: 18px; }
+      .delete-fab { left: 18px; bottom: 18px; }
+    }
+
+    @media (max-width: 640px) {
+      body { padding: 14px; }
+      .topbar {
+        padding: 12px 14px;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .brand span { font-size: 0.8rem; }
+      .brand { margin-right: 0; }
+      .account {
+        align-items: flex-start;
+        margin-right: 0;
+      }
+      .topbar > div:last-child {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+      .tile { min-height: 126px; padding: 12px; }
+      .icon { width: 50px; height: 50px; }
+      .name { margin-top: 46px; font-size: 0.88rem; }
+      .tile-badge {
+        right: 8px;
+        top: 8px;
+        min-width: 30px;
+        height: 20px;
+        padding: 0 6px;
+        font-size: 0.5rem;
+      }
+      .add-fab { right: 14px; bottom: 14px; }
+      .delete-fab { left: 14px; bottom: 14px; }
+    }
+    /* Make large/full-screen tiles match the smaller, denser layout for clarity */
+    @media (min-width: 1025px) {
+      .tile {
+        min-height: 132px;
+        padding: 12px;
+      }
+      .icon {
+        width: 52px;
+        height: 52px;
+        border-radius: 12px;
+      }
+      .name {
+        margin-top: 48px;
+        font-size: 0.94rem;
+      }
+      .tile-badge {
+        right: 10px;
+        top: 10px;
+        min-width: 32px;
+        height: 20px;
+        font-size: 0.56rem;
+      }
+    }
+    /* Modal styles (small) */
+    .modal-backdrop { position: fixed; inset: 0; display:flex; align-items:center; justify-content:center; background: rgba(2,6,23,0.6); z-index:1200; padding:20px; }
+    .modal-backdrop {
+      backdrop-filter: blur(10px);
+      animation: fadeIn 0.18s ease-out;
+    }
+    .modal {
+      width:100%;
+      max-width:420px;
+      background: var(--panel);
+      border:1px solid var(--panel-border);
+      padding:16px;
+      border-radius:12px;
+      box-shadow: 0 20px 55px rgba(0,0,0,0.32);
+      animation: scaleIn 0.18s ease-out;
+    }
+    .btn-row { display:flex; gap:10px; justify-content:flex-end; margin-top:12px; }
+    .btn-row button { padding:8px 12px; border-radius:10px; border:none; cursor:pointer; font-weight:700; }
+    .btn-row .alt { background: transparent; color: var(--muted); border:1px solid rgba(255,255,255,0.04); }
+    .btn-row .primary { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #02131f; }
+    .btn-row .danger { background: linear-gradient(135deg, #ff7a7a, var(--danger)); color:#fff; }
+    .modal h3 { margin:0 0 8px; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes scaleIn {
+      from { opacity: 0; transform: translateY(8px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <strong>CryptoSafe Vault</strong>
+      <span>Your safe space for secure files and passwords.</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <div class="account">
+        <div class="account-user">Signed in: <span id="accountUserId">—</span></div>
+      </div>
+      <a class="logout" href="/logout">Logout</a>
+      <a id="dbViewBtn" class="logout hidden" href="#" title="Admin: open database view">DB View</a>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div id="listStatus" class="status"></div>
+    <section id="fileGrid" class="grid"></section>
+  </main>
+
+  <a class="add-fab" href="/file-new.html" aria-label="Add file">+</a>
+
+  <button id="deleteAccountBtn" class="delete-fab" title="Delete your account">Delete account</button>
+  <!-- Account delete confirm modal (step 1) -->
+  <div id="acctConfirmModal" class="hidden modal-backdrop" aria-hidden="true">
+    <div class="modal">
+      <h3>Confirm account deletion</h3>
+      <p>This will permanently remove your account and all stored files. This action cannot be undone.</p>
+      <div class="btn-row">
+        <button type="button" id="acctConfirmCancel" class="alt">Cancel</button>
+        <button type="button" id="acctConfirm" class="danger">I'm sure — Continue</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Account delete password modal (step 2) -->
+  <div id="acctModal" class="hidden modal-backdrop" aria-hidden="true">
+    <div class="modal">
+      <h3>Delete account</h3>
+      <p>Please enter your account password to confirm permanent deletion.</p>
+      <div class="field">
+        <label for="acctPassword">Password</label>
+        <input id="acctPassword" type="password" autocomplete="current-password" />
+      </div>
+      <div class="btn-row">
+        <button type="button" id="acctCancel" class="alt">Cancel</button>
+        <button type="button" id="acctSubmit" class="danger">Delete account</button>
+      </div>
+      <div id="acctStatus" class="status"></div>
+    </div>
+  </div>
+
+  <script>
+    const listStatus = document.getElementById("listStatus");
+    const fileGrid = document.getElementById("fileGrid");
+
+    function showStatus(message) {
+      listStatus.textContent = message;
+      listStatus.className = "status show error";
+    }
+
+    function showModalStatus(node, message, kind = 'error') {
+      node.textContent = message;
+      node.className = `status show ${kind}`;
+    }
+
+    async function apiRequest(url, options = {}) {
+      const response = await fetch(url, {
+        ...options,
+        headers: {
+          "Content-Type": "application/json",
+          ...(options.headers || {}),
+        },
+      });
+      const text = await response.text();
+      let data = {};
+      try {
+        data = text ? JSON.parse(text) : {};
+      } catch (_) {
+        data = {};
+      }
+      if (!response.ok) {
+        throw new Error(data.error || data.message || `Request failed (${response.status}).`);
+      }
+      return data;
+    }
+
+    function renderFiles(files) {
+      fileGrid.innerHTML = "";
+
+      if (!files.length) {
+        const empty = document.createElement("div");
+        empty.className = "empty";
+        empty.textContent = "";
+        fileGrid.appendChild(empty);
+        return;
+      }
+
+      files.forEach((file) => {
+        const tile = document.createElement("a");
+        tile.className = "tile";
+        tile.href = `/file-detail.html?id=${encodeURIComponent(file.id)}`;
+        tile.title = file.title;
+
+        const top = document.createElement("div");
+        const badge = document.createElement("div");
+        badge.className = "tile-badge";
+        badge.setAttribute('aria-label', 'Open file');
+        const icon = document.createElement("div");
+        icon.className = "icon";
+        top.append(badge, icon);
+
+        const bottom = document.createElement("div");
+        const name = document.createElement("div");
+        name.className = "name";
+        name.textContent = file.title;
+        bottom.appendChild(name);
+
+        tile.append(top, bottom);
+        fileGrid.appendChild(tile);
+      });
+    }
+
+    async function loadFiles() {
+      try {
+        const data = await apiRequest("/api/files", { method: "GET" });
+        renderFiles(data.files || []);
+      } catch (error) {
+        showStatus(error.message);
+      }
+    }
+
+    loadFiles();
+  </script>
+  <script>
+    // Open database view in a new tab after prompting for admin token
+    // DB view modal handling
+    const dbViewBtn = document.getElementById('dbViewBtn');
+    const dbModal = (function(){
+      const wrap = document.createElement('div');
+      wrap.className = 'hidden modal-backdrop';
+      wrap.id = 'dbModal';
+      wrap.innerHTML = `
+      <div class="modal">
+        <h3>Open Database View</h3>
+        <p>Enter admin token to open the sanitized database view in a new tab.</p>
+        <div class="field">
+          <label for="dbToken">Admin token</label>
+          <input id="dbToken" type="text" placeholder="token..." />
+        </div>
+        <div class="btn-row">
+          <button type="button" id="dbCancel" class="alt">Cancel</button>
+          <button type="button" id="dbOpen" class="primary">Open</button>
+        </div>
+      </div>`;
+      document.body.appendChild(wrap);
+      const tokenInput = wrap.querySelector('#dbToken');
+      const cancel = wrap.querySelector('#dbCancel');
+      const openBtn = wrap.querySelector('#dbOpen');
+      function show(){ wrap.classList.remove('hidden'); wrap.setAttribute('aria-hidden','false'); setTimeout(()=>tokenInput.focus(),50); }
+      function hide(){ wrap.classList.add('hidden'); wrap.setAttribute('aria-hidden','true'); tokenInput.value=''; }
+      cancel.addEventListener('click', hide);
+      openBtn.addEventListener('click', ()=>{
+        const t = tokenInput.value.trim();
+        if (!t) return alert('Token required');
+        const url = '/database-view?token=' + encodeURIComponent(t);
+        window.open(url, '_blank');
+        hide();
+      });
+      return { show, hide };
+    })();
+
+    dbViewBtn.addEventListener('click', function(e){ e.preventDefault(); dbModal.show(); });
+  </script>
+  <script>
+    // Account UI: fetch current userid and wire delete-account action
+    (function(){
+      const idEl = document.getElementById('accountUserId');
+      const delBtn = document.getElementById('deleteAccountBtn');
+      async function fetchAccount(){
+        try{
+          const res = await fetch('/api/account');
+          if (!res.ok) return;
+          const data = await res.json();
+          if (data && data.userid) idEl.textContent = data.userid;
+          // show DB View only for admin users
+          try{
+            const btn = document.getElementById('dbViewBtn');
+            if (data && data.is_admin) btn.classList.remove('hidden'); else btn.classList.add('hidden');
+          }catch(e){}
+        }catch(e){}
+      }
+
+      const acctConfirmModal = document.getElementById('acctConfirmModal');
+      const acctConfirm = document.getElementById('acctConfirm');
+      const acctConfirmCancel = document.getElementById('acctConfirmCancel');
+
+      const acctModal = document.getElementById('acctModal');
+      const acctPassword = document.getElementById('acctPassword');
+      const acctSubmit = document.getElementById('acctSubmit');
+      const acctCancel = document.getElementById('acctCancel');
+      const acctStatus = document.getElementById('acctStatus');
+
+      function showAcctConfirm(){ acctConfirmModal.classList.remove('hidden'); acctConfirmModal.setAttribute('aria-hidden','false'); }
+      function hideAcctConfirm(){ acctConfirmModal.classList.add('hidden'); acctConfirmModal.setAttribute('aria-hidden','true'); }
+
+      function showAcctModal(){ acctStatus.textContent=''; acctStatus.className='status'; acctModal.classList.remove('hidden'); acctModal.setAttribute('aria-hidden','false'); setTimeout(()=>acctPassword.focus(),50); }
+      function hideAcctModal(){ acctModal.classList.add('hidden'); acctModal.setAttribute('aria-hidden','true'); }
+
+      // Step 1: open confirmation
+      delBtn.addEventListener('click', ()=>{ showAcctConfirm(); });
+      acctConfirmCancel.addEventListener('click', hideAcctConfirm);
+
+      // Continue to password step
+      acctConfirm.addEventListener('click', ()=>{ hideAcctConfirm(); showAcctModal(); });
+
+      acctCancel.addEventListener('click', hideAcctModal);
+
+      acctSubmit.addEventListener('click', async ()=>{
+        const pwd = acctPassword.value.trim();
+        if (!pwd) return showModalStatus(acctStatus,'Password required');
+        acctSubmit.disabled = true; acctSubmit.textContent = 'Deleting...';
+        try{
+          const res = await fetch('/api/account/delete', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password: pwd })
+          });
+          const json = await res.json();
+          if (!res.ok) {
+            showModalStatus(acctStatus, json.error || json.message || 'Failed to delete account');
+            acctSubmit.disabled = false; acctSubmit.textContent = 'Delete account';
+            return;
+          }
+          window.location.href = '/landing.html';
+        }catch(err){ showModalStatus(acctStatus,'Network error while deleting account.'); acctSubmit.disabled = false; acctSubmit.textContent = 'Delete account'; }
+      });
+
+      fetchAccount();
+    })();
+  </script>
+</body>
+</html>

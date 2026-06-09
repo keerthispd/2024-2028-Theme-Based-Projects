@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+	<title>CryptoSafe Registration</title>
+	<style>
+		:root {
+			--bg: #07111d;
+			--panel: rgba(11, 20, 34, 0.84);
+			--panel-border: rgba(110, 231, 183, 0.12);
+			--ink: #eff6ff;
+			--muted: #a6b4c2;
+			--accent: #6ee7b7;
+			--accent-2: #38bdf8;
+			--danger: #f43f5e;
+			--input-bg: rgba(255, 255, 255, 0.04);
+			--input-border: rgba(166, 180, 194, 0.25);
+			--chip: rgba(56, 189, 248, 0.12);
+		}
+
+		* {
+			box-sizing: border-box;
+		}
+
+		body {
+			margin: 0;
+			min-height: 100vh;
+			font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+			color: var(--ink);
+			background:
+				radial-gradient(circle at 15% 15%, rgba(56, 189, 248, 0.18), transparent 28%),
+				radial-gradient(circle at 85% 20%, rgba(110, 231, 183, 0.16), transparent 24%),
+				linear-gradient(160deg, #020814, #081627 50%, #050d18);
+			padding: 24px;
+			display: grid;
+			place-items: center;
+		}
+
+		.layout {
+			width: min(1180px, 100%);
+			display: grid;
+			grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
+			gap: 20px;
+			align-items: stretch;
+		}
+
+		.hero,
+		.card {
+			background: var(--panel);
+			border: 1px solid var(--panel-border);
+			border-radius: 24px;
+			box-shadow: 0 22px 60px rgba(0, 0, 0, 0.32);
+			backdrop-filter: blur(14px);
+			display: flex;
+			flex-direction: column;
+			justify-content: space-between;
+		}
+
+		/* Keep hero compact and anchored at top; let card fill remaining height */
+		.hero { align-self: start; min-height: auto; }
+		.card { min-height: 420px; }
+
+		.hero {
+			padding: 28px;
+		}
+
+		.eyebrow {
+			display: inline-flex;
+			align-items: center;
+			gap: 8px;
+			padding: 8px 12px;
+			border-radius: 999px;
+			background: rgba(7, 25, 38, 0.4);
+			border: 1px solid rgba(94, 234, 212, 0.22);
+			color: var(--accent);
+			font-size: 0.84rem;
+			font-weight: 700;
+			letter-spacing: 0.08em;
+			text-transform: uppercase;
+		}
+
+		h1 {
+			margin: 16px 0 10px;
+			font-size: clamp(2.3rem, 5vw, 4.4rem);
+			line-height: 0.98;
+			letter-spacing: -0.04em;
+		}
+
+		.lede {
+			max-width: 58ch;
+			margin: 0;
+			color: var(--muted);
+			font-size: 1.04rem;
+			line-height: 1.6;
+		}
+
+		.grid {
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 14px;
+			margin-top: 22px;
+		}
+
+		.tile {
+			padding: 16px;
+			border-radius: 18px;
+			background: rgba(255, 255, 255, 0.04);
+			border: 1px solid rgba(166, 180, 194, 0.12);
+		}
+
+		.tile strong {
+			display: block;
+			margin-bottom: 6px;
+			font-size: 1rem;
+		}
+
+		.tile span {
+			color: var(--muted);
+			font-size: 0.88rem;
+			line-height: 1.45;
+		}
+
+		.card {
+			padding: 28px;
+		}
+
+			/* Auth option cards */
+			.auth-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap:12px; margin-bottom:12px }
+			.option-card { background: rgba(255,255,255,0.03); border:1px solid rgba(166,180,194,0.08); padding:12px; border-radius:12px; cursor:pointer; display:flex; gap:12px; align-items:center }
+			.option-card .icon { width:48px; height:48px; display:inline-flex; align-items:center; justify-content:center; color:var(--accent-2); }
+			.option-card.selected { border-color: rgba(94,234,212,0.6); box-shadow:0 6px 18px rgba(56,189,248,0.06) }
+			.option-card .meta { color:var(--muted); font-size:0.92rem }
+			.option-card input[type="radio"]{ display:none }
+
+		h2 {
+			margin: 0 0 8px;
+			font-size: 1.6rem;
+		}
+
+		p {
+			margin: 0 0 18px;
+			color: var(--muted);
+			line-height: 1.5;
+		}
+
+		label {
+			display: block;
+			margin-bottom: 7px;
+			font-weight: 700;
+			font-size: 0.93rem;
+		}
+
+		.field {
+			margin-bottom: 14px;
+		}
+
+		input {
+			width: 100%;
+			border: 1px solid var(--input-border);
+			border-radius: 12px;
+			padding: 12px 13px;
+			font: inherit;
+			color: var(--ink);
+			background: var(--input-bg);
+			outline: none;
+			transition: border-color 0.2s ease, box-shadow 0.2s ease;
+		}
+
+		input:focus {
+			border-color: rgba(110, 231, 183, 0.8);
+			box-shadow: 0 0 0 4px rgba(110, 231, 183, 0.12);
+		}
+
+		button {
+			width: 100%;
+			border: 0;
+			border-radius: 12px;
+			padding: 12px 14px;
+			font: inherit;
+			font-weight: 700;
+			color: #02131f;
+			background: linear-gradient(135deg, var(--accent), var(--accent-2));
+			cursor: pointer;
+			transition: transform 0.15s ease, filter 0.15s ease;
+		}
+
+		button:hover {
+			transform: translateY(-1px);
+			filter: brightness(1.05);
+		}
+
+		.note {
+			margin-top: 14px;
+			font-size: 0.85rem;
+			color: var(--muted);
+			line-height: 1.45;
+		}
+
+		.status {
+			display: none;
+			padding: 12px 14px;
+			border-radius: 12px;
+			margin-bottom: 16px;
+			font-size: 0.95rem;
+			line-height: 1.45;
+		}
+
+		.status.show {
+			display: block;
+		}
+
+		.status.error {
+			background: rgba(244, 63, 94, 0.18);
+			color: #fecdd3;
+		}
+
+		.links {
+			display: flex;
+			gap: 10px;
+			flex-wrap: wrap;
+			margin-top: 14px;
+		}
+
+		.links a {
+			text-decoration: none;
+			font-weight: 700;
+			color: var(--accent);
+		}
+
+		@media (max-width: 900px) {
+			.layout {
+				grid-template-columns: 1fr;
+			}
+
+			.hero {
+				padding-bottom: 8px;
+			}
+
+			.grid {
+				grid-template-columns: 1fr;
+			}
+		}
+	</style>
+</head>
+<body>
+	<div class="layout">
+		<section class="hero">
+			<div class="eyebrow">Secure access</div>
+			<h1>Create your CryptoSafe account.</h1>
+			<p class="lede">Store your sensitive information in a secure space.</p>
+
+			<div class="grid">
+				<div class="tile">
+					<strong>Encrypted vault</strong>
+					<span>Your stored details are encrypted before being saved.</span>
+				</div>
+				<div class="tile">
+					<strong>Protected login</strong>
+					<span>Your account is protected with secure authentication and limited failed login attempts.</span>
+				</div>
+			</div>
+		</section>
+
+		<main class="card">
+			<h2>Registration</h2>
+			<p>Register with a unique user ID and password.</p>
+			<div id="status" class="status"></div>
+
+			<form action="/register" method="POST">
+				<input id="biometricCredential" name="biometric_credential" type="hidden" />
+				<div class="field">
+					<label>Authentication method</label>
+					<div class="auth-grid">
+						<div class="option-card" data-value="biometric" id="opt-biometric">
+							<input type="radio" name="auth_method" value="biometric" checked />
+							<div class="icon" aria-hidden="true">
+								<!-- fingerprint icon (monochrome) -->
+								<svg viewBox="0 0 24 24" width="36" height="36" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2v4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M7 4.5l-1.5 2.6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M17 4.5l1.5 2.6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M4.5 10A7.5 7.5 0 0012 21a7.5 7.5 0 007.5-11" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+							</div>
+							<div>
+								<strong>Use device biometric</strong>
+								<div class="meta">Register a passkey (fingerprint/face) on this device for quick unlock.</div>
+							</div>
+						</div>
+						<div class="option-card" data-value="passcode" id="opt-passcode">
+							<input type="radio" name="auth_method" value="passcode" />
+							<div class="icon" aria-hidden="true">
+								<!-- lock icon -->
+								<svg viewBox="0 0 24 24" width="36" height="36" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="10" width="16" height="10" rx="2" stroke="currentColor" stroke-width="1.4"/><path d="M8 10V7a4 4 0 118 0v3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+							</div>
+							<div>
+								<strong>Set numeric passcode</strong>
+								<div class="meta">Fallback method for devices without biometrics. Use 4+ digits.</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div id="passcodeFields" style="display:none;">
+					<div class="field">
+						<label for="passcode">Passcode (4+ digits)</label>
+						<input id="passcode" name="passcode" type="password" minlength="4" maxlength="32" inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code" />
+					</div>
+					<div class="field">
+						<label for="passcode_confirm">Confirm Passcode</label>
+						<input id="passcode_confirm" name="passcode_confirm" type="password" minlength="4" maxlength="32" inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code" />
+					</div>
+				</div>
+				<div class="field">
+					<label for="userid">User ID</label>
+					<input id="userid" name="userid" type="text" minlength="3" maxlength="40" required />
+				</div>
+
+				<div class="field">
+					<label for="password">Password</label>
+					<input id="password" name="password" type="password" minlength="6" maxlength="128" required />
+				</div>
+
+				<div class="field">
+					<label for="confirm_password">Confirm Password</label>
+					<input id="confirm_password" name="confirm_password" type="password" minlength="6" maxlength="128" required />
+				</div>
+
+				<div class="field">
+					<label for="backup_question">Backup Security Question</label>
+					<input
+						id="backup_question"
+						name="backup_question"
+						type="text"
+						maxlength="160"
+						placeholder="Example: What was the name of your first school?"
+						required
+					/>
+				</div>
+
+				<div class="field">
+					<label for="backup_answer">Backup Answer</label>
+					<input
+						id="backup_answer"
+						name="backup_answer"
+						type="password"
+						minlength="2"
+						maxlength="128"
+						required
+					/>
+				</div>
+
+				<button id="createAccountBtn" type="submit">Create Account</button>
+				<div class="links">
+					<a href="/login.html">Already have an account? Login</a>
+				</div>
+			</form>
+		</main>
+	</div>
+
+	<script>
+		function base64urlToBuffer(value) {
+			if (value instanceof ArrayBuffer) {
+				return new Uint8Array(value);
+			}
+			if (ArrayBuffer.isView(value)) {
+				return new Uint8Array(value.buffer, value.byteOffset, value.byteLength);
+			}
+			if (typeof value !== "string") {
+				throw new Error("Invalid binary input format.");
+			}
+			const base64 = value.replace(/-/g, "+").replace(/_/g, "/");
+			const padded = base64 + "=".repeat((4 - (base64.length % 4)) % 4);
+			const binary = atob(padded);
+			const bytes = new Uint8Array(binary.length);
+			for (let i = 0; i < binary.length; i += 1) {
+				bytes[i] = binary.charCodeAt(i);
+			}
+			return bytes;
+		}
+
+		function bufferToBase64url(input) {
+			const bytes = input instanceof Uint8Array ? input : new Uint8Array(input);
+			let binary = "";
+			for (const b of bytes) {
+				binary += String.fromCharCode(b);
+			}
+			return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
+		}
+
+		function ensureWebAuthnHost() {
+			const host = window.location.hostname;
+			if (host === "127.0.0.1" || host === "0.0.0.0" || host === "::1") {
+				const normalized = `${window.location.protocol}//localhost${window.location.port ? `:${window.location.port}` : ""}${window.location.pathname}${window.location.search}${window.location.hash}`;
+				window.location.replace(normalized);
+				return false;
+			}
+			return true;
+		}
+
+		function showInlineError(message) {
+			status.textContent = message;
+			status.className = "status show error";
+		}
+
+		async function createBiometricCredential(userid) {
+			const response = await fetch("/api/biometric/register/options", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ userid })
+			});
+
+			const options = await response.json();
+			if (!response.ok) {
+				throw new Error(options.error || "Unable to start biometric setup.");
+			}
+
+			options.challenge = base64urlToBuffer(options.challenge);
+			options.user.id = base64urlToBuffer(options.user.id);
+			if (Array.isArray(options.excludeCredentials)) {
+				options.excludeCredentials = options.excludeCredentials.map((item) => ({
+					...item,
+					id: base64urlToBuffer(item.id),
+				}));
+			}
+
+			const credential = await navigator.credentials.create({ publicKey: options });
+			if (!credential) {
+				throw new Error("Biometric setup was cancelled.");
+			}
+
+			return {
+				id: credential.id,
+				rawId: bufferToBase64url(credential.rawId),
+				type: credential.type,
+				response: {
+					attestationObject: bufferToBase64url(credential.response.attestationObject),
+					clientDataJSON: bufferToBase64url(credential.response.clientDataJSON),
+					transports:
+						typeof credential.response.getTransports === "function"
+							? credential.response.getTransports()
+							: [],
+				},
+				clientExtensionResults: credential.getClientExtensionResults(),
+				authenticatorAttachment: credential.authenticatorAttachment || "platform",
+			};
+		}
+
+		const params = new URLSearchParams(window.location.search);
+		const error = params.get("error");
+		const status = document.getElementById("status");
+		const form = document.querySelector("form[action='/register']");
+		const createBtn = document.getElementById("createAccountBtn");
+		const userIdInput = document.getElementById("userid");
+		const biometricField = document.getElementById("biometricCredential");
+ 			const authRadios = document.querySelectorAll("input[name='auth_method']");
+ 			const passcodeFields = document.getElementById("passcodeFields");
+ 			const passcodeInput = document.getElementById("passcode");
+ 			const passcodeConfirmInput = document.getElementById("passcode_confirm");
+ 			const optionCards = document.querySelectorAll('.option-card');
+
+			optionCards.forEach(card=>{
+				card.addEventListener('click', ()=>{
+					const input = card.querySelector('input[type=radio]');
+					if(input){ input.checked = true; }
+					optionCards.forEach(c=>c.classList.remove('selected'));
+					card.classList.add('selected');
+					updateMethodUI();
+				});
+			});
+
+		if (error) {
+			showInlineError(error);
+		}
+
+		function updateMethodUI() {
+			const method = document.querySelector("input[name='auth_method']:checked").value;
+			createBtn.disabled = false;
+			createBtn.textContent = "Create Account";
+			if (method === "passcode") {
+				passcodeFields.style.display = "block";
+			} else {
+				passcodeFields.style.display = "none";
+			}
+		}
+
+		authRadios.forEach(r => r.addEventListener('change', updateMethodUI));
+		updateMethodUI();
+
+		form.addEventListener("submit", async (event) => {
+			event.preventDefault();
+
+			const userid = userIdInput.value.trim();
+			if (userid.length < 3) {
+				showInlineError("User ID must be at least 3 characters.");
+				return;
+			}
+
+			const method = document.querySelector("input[name='auth_method']:checked").value;
+			const backupAnswerInput = document.getElementById("backup_answer");
+			if (!backupAnswerInput.value || backupAnswerInput.value.trim().length < 2) {
+				showInlineError("Backup answer must be at least 2 characters.");
+				return;
+			}
+			if (method === 'passcode') {
+				if (!passcodeInput.value || passcodeInput.value !== passcodeConfirmInput.value || passcodeInput.value.length < 4 || !/^[0-9]+$/.test(passcodeInput.value)) {
+					showInlineError('Passcode required, must match, be at least 4 digits, and contain only numbers.');
+					return;
+				}
+				form.submit();
+				return;
+			}
+
+			if (!(window.PublicKeyCredential && navigator.credentials && navigator.credentials.create)) {
+				showInlineError("This browser or device does not support biometric passkeys. Choose 'Set a numeric passcode' instead.");
+				return;
+			}
+
+			if (!ensureWebAuthnHost()) {
+				showInlineError("Redirecting to localhost for biometric compatibility...");
+				return;
+			}
+
+			createBtn.disabled = true;
+			createBtn.textContent = "Waiting for biometric approval...";
+			try {
+				const credential = await createBiometricCredential(userid);
+				biometricField.value = JSON.stringify(credential);
+				form.submit();
+			} catch (setupError) {
+				showInlineError(setupError.message || "Biometric setup failed.");
+				createBtn.disabled = false;
+				createBtn.textContent = "Create Account";
+			}
+		});
+	</script>
+</body>
+</html>
