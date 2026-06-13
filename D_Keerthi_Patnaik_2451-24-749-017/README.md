@@ -5,7 +5,6 @@ CryptoSafe is a secure data storage platform designed to protect sensitive perso
 The project provides:
 
 - A Web Application built using Flask
-- An Android Application built using Flutter
 - Multi-factor authentication
 - Biometric authentication using WebAuthn Passkeys
 - Secure encryption for stored data
@@ -102,23 +101,6 @@ Authentication:
 - Passkeys
 - Password Authentication
 
-### Android Application
-
-Framework:
-
-- Flutter
-
-Authentication:
-
-- Secure API Integration
-- Biometric Authentication Support
-- Local Encrypted Storage
-
-Communication:
-
-- REST APIs
-- HTTPS
-
 ---
 
 ## Project Structure
@@ -133,13 +115,8 @@ CryptoSafe/
 │   ├── utils/
 │   └── requirements.txt
 │
-├── mobile_app/
-│   ├── lib/
-│   ├── android/
-│   ├── test/
-│   └── pubspec.yaml
-│
-├── tools/
+├── app.py
+├── run.py
 │
 ├── README.md
 └── requirements.txt
@@ -279,42 +256,6 @@ http://localhost:5000
 
 ---
 
-## Android Application Setup
-
-### Prerequisites
-
-- Flutter SDK
-- Android Studio
-- Android Emulator or Physical Device
-
-### Install Dependencies
-
-```bash
-cd mobile_app
-
-flutter pub get
-```
-
-### Run Application
-
-```bash
-flutter run
-```
-
-### Build APK
-
-```bash
-flutter build apk
-```
-
-Generated APK:
-
-```text
-build/app/outputs/flutter-apk/app-release.apk
-```
-
----
-
 ## Database
 
 Default Database:
@@ -362,6 +303,7 @@ Stores:
 
 ## Future Enhancements
 
+- Android Application
 - Native Android Biometric Integration
 - SQLCipher Full Deployment
 - Cloud Backup Support
@@ -395,7 +337,3 @@ B.Tech CSE (IoT, Cybersecurity and Blockchain Technology)
 MVSR Engineering College
 
 ---
-
-## License
-
-This project is released under the MIT License.
